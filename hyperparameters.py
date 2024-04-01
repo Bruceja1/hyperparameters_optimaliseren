@@ -124,24 +124,35 @@ for j in range(5):
 
     # Bevat alle namen van de hyperparameters
     parameters = []
-    # Elke index i binnen deze lijst bevat alle waardes van hyperparameter i afkomstig uit bestpopulation
+    # Elke index i binnen de value lijst bevat een lijst van alle waardes van de hyperparameter op index i in 
+    # parameters[]. Deze lijst wordt gebruikt om de waardes van de hyperparameters van de nieuwe generatie
+    # te selecteren.
     values = []
+    j = 0
     for p in population[0].keys():
         parameters.append(p)
         values.append([])
-        for i in bestpopulation:
-            values[p].append(bestpopulation[i][parameters[p]])
+        print(f"Dit is de lijst met parameters: {parameters}")
+        for i in range(len(bestpopulation)):
+            values[j].append(bestpopulation[i][1][parameters[j]])
+        print(f"Dit is de lijst met values: {values}")
+        j += 1
 
     # Een nieuw individu pakt voor elke hyperparameter een willekeurige waarde uit de lijst van alle waardes
     # voor de betreffende hyperparameter.
     newPopulation = []
     for _ in range(20):
         newIndividual = {}
-        for p in parameters:
-            newIndividual[p] = random.choice(values[p])
-        # mutatie functie hier toevoegen aub
+        for p in range(len(parameters)):
+            newIndividual[parameters[p]] = random.choice(values[p])
+        # mutatie hier 
         newPopulation.append(newIndividual)
+        print(f"Het individu {newIndividual} is toegevoegd aan de nieuwe generatie.")
     
+    print(parameters)
+    print(values)
+    print(newPopulation[0])
+    rankedpopulation = newPopulation
    
 
 
