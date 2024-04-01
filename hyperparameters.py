@@ -95,7 +95,7 @@ def fitness(individual):
 
 # Initiële populatie (hyperparameters) genereren. Elke waarde is willekeurig
 # De omvang van de getallen kan aangepast worden. (Dus (1, 50) kan omgezet worden naar (1, 100), bijvoorbeeld)
-# Let op: een te grote range kan er voor zorgen dat het algoritme erg lang duurt.
+# Let op: een grote range kan er voor zorgen dat het algoritme erg lang duurt.
 population = []
 activation_functions = ['relu', 'tanh', 'logistic', 'identity']
 # Het getal in de range() functie bepaalt de grootte van de populatie
@@ -107,18 +107,46 @@ for i in range(20):
          'alpha': random.uniform(0.001, 0.1),
          'learning_rate_init': random.uniform(0.001, 0.1)})
 
-for i in range(5):
+for j in range(5):
     rankedpopulation = []
-    for s in population:
-        rankedpopulation.append((fitness(s), s))
+    for individual in population:
+        rankedpopulation.append((fitness(individual), individual))
     
     print(rankedpopulation[0])
     print(rankedpopulation[1])
     rankedpopulation.sort(key=lambda x: x[0])
     rankedpopulation.reverse()
 
-    print(f" === Gen {i} best solutions === ")
+    print(f" === Gen {j} best solutions === ")
     print(rankedpopulation[0]) 
+
+    bestpopulation = rankedpopulation[:10]
+
+    # Bevat alle namen van de hyperparameters
+    parameters = []
+    # Elke index i binnen deze lijst bevat alle waardes van hyperparameter i afkomstig uit bestpopulation
+    values = []
+    for p in population[0].keys():
+        parameters.append(p)
+        values.append([])
+        for i in bestpopulation:
+            values[p].append(bestpopulation[i][parameters[p]])
+
+    # Een nieuw individu pakt voor elke hyperparameter een willekeurige waarde uit de lijst van alle waardes
+    # voor de betreffende hyperparameter.
+    newPopulation = []
+    for _ in range(20):
+        newIndividual = {}
+        for p in parameters:
+            newIndividual[p] = random.choice(values[p])
+        # mutatie functie hier toevoegen aub
+        newPopulation.append(newIndividual)
+    
+   
+
+
+
+
 
 """ print(population[0])
 print(population[0].keys())
@@ -136,4 +164,4 @@ print(confusion_matrix(y_test, pred_mlpc))
 
 cm = accuracy_score(y_test, pred_mlpc)
 print(cm)
- """
+"""
