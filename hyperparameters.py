@@ -55,9 +55,9 @@ X_test = sc.transform(X_test)
 
 def get_accuracy_score(individual):
     global X_train, y_train, X_test, y_test
-    convertedValues = convert_values_to_string(individual)
+    # convertedValues = convert_values_to_string(individual)
     # mlpc = MLPClassifier(hidden_layer_sizes=[50,50,50], max_iter=50, alpha=0.001, activation='identity', learning_rate_init=0.1,)
-    mlpc = MLPClassifier(convertedValues)
+    mlpc = MLPClassifier(**individual)
     mlpc.fit(X_train, y_train)
     pred_mlpc = mlpc.predict(X_test)
 
@@ -78,39 +78,43 @@ def fitness(individual):
 
 # Methode om de gegenereerde hyperparameters omzetten naar een string die als parameter in de MLPClassifier() 
 # methode gezet kan worden.    
-def convert_values_to_string(individual):
+""" def convert_values_to_string(individual):
     convertedValues = ""
     keyList = list(individual.keys())
     valueList = list(individual.values())
     
     for i in range(len(keyList)):
         if isinstance(valueList[i], str):
-            convertedValues += f"{keyList[i]} = '{valueList[i]}', "
+            convertedValues += f"{keyList[i]}='{valueList[i]}', "
         else:
-            convertedValues += f"{keyList[i]} = {valueList[i]}, "
+            convertedValues += f"{keyList[i]}={valueList[i]}, "
 
     print(f"The converted values are: {convertedValues}")
-    return convertedValues
+    return convertedValues """
 
 
 # Initiële populatie (hyperparameters) genereren. Elke waarde is willekeurig
-# De omvang van de getallen kan aangepast worden. (Dus 1, 50 kan omgezet worden naar 1, 100, bijvoorbeeld)
+# De omvang van de getallen kan aangepast worden. (Dus (1, 50) kan omgezet worden naar (1, 100), bijvoorbeeld)
+# Let op: een te grote range kan er voor zorgen dat het algoritme erg lang duurt.
 population = []
 activation_functions = ['relu', 'tanh', 'logistic', 'identity']
 # Het getal in de range() functie bepaalt de grootte van de populatie
-for i in range(100):
+for i in range(20):
     population.append(
-        {'hidden_layer_sizes': (random.randint(1, 50), random.randint(1, 50), random.randint(1, 50)),
-         'max_iter': random.randint(1, 1000),
+        {'hidden_layer_sizes': (random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)),
+         'max_iter': random.randint(1, 5),
          'activation': random.choice(activation_functions),
          'alpha': random.uniform(0.001, 0.1),
          'learning_rate_init': random.uniform(0.001, 0.1)})
 
-for i in range(10):
+for i in range(5):
     rankedpopulation = []
     for s in population:
         rankedpopulation.append((fitness(s), s))
-    rankedpopulation.sort()
+    
+    print(rankedpopulation[0])
+    print(rankedpopulation[1])
+    rankedpopulation.sort(key=lambda x: x[0])
     rankedpopulation.reverse()
 
     print(f" === Gen {i} best solutions === ")
@@ -119,3 +123,17 @@ for i in range(10):
 """ print(population[0])
 print(population[0].keys())
 print(population[0].values()) """
+
+# DEBUGGING
+""" 
+
+mlpc = MLPClassifier(hidden_layer_sizes=(50,50,50), max_iter=50, alpha=0.001, activation='identity', learning_rate_init=0.1, )
+mlpc.fit(X_train, y_train)
+pred_mlpc = mlpc.predict(X_test)
+
+print(classification_report(y_test, pred_mlpc))
+print(confusion_matrix(y_test, pred_mlpc))
+
+cm = accuracy_score(y_test, pred_mlpc)
+print(cm)
+ """
