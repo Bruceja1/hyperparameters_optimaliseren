@@ -76,6 +76,39 @@ def fitness(individual):
     else:
         return abs(1/score)
 
+def mutate(individual):
+    # Kans op mutatie voor 'hidden_layer_sizes' 
+    r = random.randint(1, 50)
+    if r == 1:
+        individual['hidden_layer_sizes'] = (random.randint(1, 5), random.randint(1, 5), random.randint(1, 5))
+        print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor hidden layers: {individual['hidden_layer_sizes']}")
+    
+    # Kans op mutatie voor 'max_iter'
+    r = random.randint(1, 50)
+    if r == 1:
+        individual['max_iter'] = random.randint(1, 5)
+        print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor max iter: {individual['max_iter']}")
+
+    # Kans op mutatie voor 'activation'
+    r = random.randint(1, 50)
+    if r == 1:
+        individual['activation'] = random.choice(activation_functions)
+        print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor de activatiefunctie: {individual['activation']}")
+
+    # Kans op mutatie voor 'alpha'
+    r = random.randint(1, 50)
+    if r == 1:
+        individual['alpha'] = round(random.uniform(0.001, 0.1), 3)
+        print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor de alpha-waarde: {individual['alpha']}")
+
+    # Kans op mutatie voor 'learning_rate_init'
+    r = random.randint(1, 50)
+    if r == 1:
+        individual['learning_rate_init'] = round(random.uniform(0.001, 0.1), 3)
+        print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor'learning_rate_init': {individual['learning_rate_init']}")
+
+    return individual
+
 # Methode om de gegenereerde hyperparameters omzetten naar een string die als parameter in de MLPClassifier() 
 # methode gezet kan worden.    
 """ def convert_values_to_string(individual):
@@ -93,7 +126,7 @@ def fitness(individual):
     return convertedValues """
 
 
-# Initiële populatie (hyperparameters) genereren. Elke waarde is willekeurig
+# Initiële populatie genereren. Elke waarde is willekeurig
 # De omvang van de getallen kan aangepast worden. (Dus (1, 50) kan omgezet worden naar (1, 100), bijvoorbeeld)
 # Let op: een grote range kan er voor zorgen dat het algoritme erg lang duurt.
 population = []
@@ -104,8 +137,8 @@ for i in range(20):
         {'hidden_layer_sizes': (random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)),
          'max_iter': random.randint(1, 5),
          'activation': random.choice(activation_functions),
-         'alpha': random.uniform(0.001, 0.1),
-         'learning_rate_init': random.uniform(0.001, 0.1)})
+         'alpha': round(random.uniform(0.001, 0.1), 3),
+         'learning_rate_init': round(random.uniform(0.001, 0.1), 3)})
 
 for j in range(5):
     rankedpopulation = []
@@ -139,13 +172,14 @@ for j in range(5):
         j += 1
 
     # Een nieuw individu pakt voor elke hyperparameter een willekeurige waarde uit de lijst van alle waardes
-    # voor de betreffende hyperparameter.
+    # voor de betreffende hyperparameter. De waardes uit die lijst zijn afkomstig van de individuen in 
+    # de lijst 'bestpopulation'
     newPopulation = []
     for _ in range(20):
         newIndividual = {}
         for p in range(len(parameters)):
             newIndividual[parameters[p]] = random.choice(values[p])
-        # mutatie hier 
+        mutate(newIndividual) 
         newPopulation.append(newIndividual)
         print(f"Het individu {newIndividual} is toegevoegd aan de nieuwe generatie.")
     
