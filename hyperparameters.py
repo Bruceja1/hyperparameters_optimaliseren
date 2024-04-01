@@ -65,7 +65,7 @@ def get_accuracy_score(individual):
     print(confusion_matrix(y_test, pred_mlpc))
 
     cm = accuracy_score(y_test, pred_mlpc)
-    print(cm)
+    #print(cm)
     return cm
     
 def fitness(individual):
@@ -109,30 +109,16 @@ def mutate(individual):
 
     return individual
 
-# Methode om de gegenereerde hyperparameters omzetten naar een string die als parameter in de MLPClassifier() 
-# methode gezet kan worden.    
-""" def convert_values_to_string(individual):
-    convertedValues = ""
-    keyList = list(individual.keys())
-    valueList = list(individual.values())
-    
-    for i in range(len(keyList)):
-        if isinstance(valueList[i], str):
-            convertedValues += f"{keyList[i]}='{valueList[i]}', "
-        else:
-            convertedValues += f"{keyList[i]}={valueList[i]}, "
-
-    print(f"The converted values are: {convertedValues}")
-    return convertedValues """
-
-
 # Initiële populatie genereren. Elke waarde is willekeurig
 # De omvang van de getallen kan aangepast worden. (Dus (1, 50) kan omgezet worden naar (1, 100), bijvoorbeeld)
 # Let op: een grote range kan er voor zorgen dat het algoritme erg lang duurt.
 population = []
 activation_functions = ['relu', 'tanh', 'logistic', 'identity']
+best_individuals = []
 # Het getal in de range() functie bepaalt de grootte van de populatie
+print("De initiële populatie wordt nu gegenereerd...")
 for i in range(20):
+    print(f"Individu {i} wordt gegenereerd.")
     population.append(
         {'hidden_layer_sizes': (random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)),
          'max_iter': random.randint(1, 5),
@@ -150,8 +136,9 @@ for j in range(5):
     rankedpopulation.sort(key=lambda x: x[0])
     rankedpopulation.reverse()
 
-    print(f" === Gen {j} best solutions === ")
-    print(rankedpopulation[0]) 
+    print(f" === Generatie {j} beste individu === ")
+    print(f"{rankedpopulation[0][1]} met een accuracy van {get_accuracy_score(rankedpopulation[0][1])}") 
+    best_individuals.append(rankedpopulation[0])
 
     bestpopulation = rankedpopulation[:10]
 
@@ -165,10 +152,10 @@ for j in range(5):
     for p in population[0].keys():
         parameters.append(p)
         values.append([])
-        print(f"Dit is de lijst met parameters: {parameters}")
+        #print(f"Dit is de lijst met parameters: {parameters}")
         for i in range(len(bestpopulation)):
             values[j].append(bestpopulation[i][1][parameters[j]])
-        print(f"Dit is de lijst met values: {values}")
+        #print(f"Dit is de lijst met values: {values}")
         j += 1
 
     # Een nieuw individu pakt voor elke hyperparameter een willekeurige waarde uit de lijst van alle waardes
@@ -183,12 +170,18 @@ for j in range(5):
         newPopulation.append(newIndividual)
         print(f"Het individu {newIndividual} is toegevoegd aan de nieuwe generatie.")
     
-    print(parameters)
-    print(values)
-    print(newPopulation[0])
-    rankedpopulation = newPopulation
-   
+    #print(parameters)
+    #print(values)
+    #print(newPopulation[0])
+    population = newPopulation
 
+accuracies = []
+for g in range((len(best_individuals))):
+    accuracy = get_accuracy_score(best_individuals[g][1])
+    accuracies.append(accuracy)
+    
+for h in range((len(best_individuals))):
+    print(f"Het beste individu in generatie {h} is: {best_individuals[h][1]} met een accuracy van {accuracies[h]}.")
 
 
 
