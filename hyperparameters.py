@@ -11,7 +11,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 from sklearn.preprocessing import StandardScaler
 
 # dataset = load_digits()
-dataset = pd.read_csv('UNSW_NB15.csv',sep=',')
+dataset = pd.read_csv('UNSW_NB15.csv',sep=',').sample(20000)
 # print(dataset.head())
 # print(dataset.info())
 # print(dataset.isnull().sum())
@@ -80,13 +80,13 @@ def mutate(individual):
     # Kans op mutatie voor 'hidden_layer_sizes' 
     r = random.randint(1, 50)
     if r == 1:
-        individual['hidden_layer_sizes'] = (random.randint(1, 5), random.randint(1, 5), random.randint(1, 5))
+        individual['hidden_layer_sizes'] = (random.randint(1, 10), random.randint(1, 10), random.randint(1, 10))
         print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor hidden layers: {individual['hidden_layer_sizes']}")
     
     # Kans op mutatie voor 'max_iter'
     r = random.randint(1, 50)
     if r == 1:
-        individual['max_iter'] = random.randint(1, 5)
+        individual['max_iter'] = random.randint(1, 10)
         print(f"Dit individu is gemuteerd en heeft een nieuwe waarde voor max iter: {individual['max_iter']}")
 
     # Kans op mutatie voor 'activation'
@@ -117,16 +117,17 @@ activation_functions = ['relu', 'tanh', 'logistic', 'identity']
 best_individuals = []
 # Het getal in de range() functie bepaalt de grootte van de populatie
 print("De initiële populatie wordt nu gegenereerd...")
-for i in range(20):
+for i in range(100):
     print(f"Individu {i} wordt gegenereerd.")
     population.append(
-        {'hidden_layer_sizes': (random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)),
-         'max_iter': random.randint(1, 5),
+        {'hidden_layer_sizes': (random.randint(1, 10), random.randint(1, 10), random.randint(1, 10)),
+         'max_iter': random.randint(1, 10),
          'activation': random.choice(activation_functions),
          'alpha': round(random.uniform(0.001, 0.1), 3),
          'learning_rate_init': round(random.uniform(0.001, 0.1), 3)})
 
-for j in range(5):
+# Aantal generaties
+for j in range(10):
     rankedpopulation = []
     for individual in population:
         rankedpopulation.append((fitness(individual), individual))
@@ -162,7 +163,7 @@ for j in range(5):
     # voor de betreffende hyperparameter. De waardes uit die lijst zijn afkomstig van de individuen in 
     # de lijst 'bestpopulation'
     newPopulation = []
-    for _ in range(20):
+    for _ in range(100):
         newIndividual = {}
         for p in range(len(parameters)):
             newIndividual[parameters[p]] = random.choice(values[p])
